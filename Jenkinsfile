@@ -6,10 +6,10 @@ pipeline {
         // }
         stages {
          
-          stage("build & 6410110118-sonaqube") {
+          stage("build & 6410110118-sonaqube-installation") {
             agent any
             steps {
-              withSonarQubeEnv('6410110118-sonaqube') {
+              withSonarQubeEnv('6410110118-sonaqube-installation') {
                 sh 'mvn clean package sonar:sonar'
               }
             }
