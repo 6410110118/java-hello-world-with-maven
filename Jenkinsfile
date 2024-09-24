@@ -2,22 +2,18 @@ pipeline {
     agent any
 
     stages {
-        stage('Maven') {
-            steps {
-                script {
-                    // Run Maven inside a Docker container without -it
-                    sh 'docker run --rm --name my-maven-project maven:3.9.9 mvn --version'
-                }
-            }
-        }
         stage('Build') {
             steps {
-                dir('/var/jenkins_home/myapp') {                
-                    script {
-                        // Run Maven inside a Docker container without -it
-                        //sh 'ls -l'
-                        sh 'docker run --rm --name my-maven-project -v "$(pwd):/usr/src/mymaven" -w /usr/src/mymaven maven:3.9.9 mvn clean install'
-                    }
+                git 'https://github.com/6410110118/java-hello-world-with-maven.git'
+                bat "npm install"
+            }
+        }
+
+        stage('Scan') {
+            steps {
+                withSonarQubeEnv(installationName: 'sq1') {
+                    bat "npm install sonar-scanner"
+                    bat 'npx sonar-scanner -X -X -Dsonar.projectKey=6410110118-sonarqube'
                 }
             }
         }
