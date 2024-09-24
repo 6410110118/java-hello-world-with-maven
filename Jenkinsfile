@@ -1,20 +1,24 @@
-pipeline{
+pipeline {
     agent any
 
-    tools {
-         maven 'maven'
-         jdk 'java'
-    }
-
-    stages{
-        stage('checkout'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github access', url: 'https://github.com/sreenivas449/java-hello-world-with-maven.git']]])
+    stages {
+        stage('Maven') {
+            steps {
+                script {
+                    // Run Maven inside a Docker container without -it
+                    sh 'docker run --rm --name my-maven-project maven:3.9.9 mvn --version'
+                }
             }
         }
-        stage('build'){
-            steps{
-               bat 'mvn package'
+        stage('Build') {
+            steps {
+                dir('/var/jenkins_home/myapp') {                
+                    script {
+                        // Run Maven inside a Docker container without -it
+                        //sh 'ls -l'
+                        sh 'docker run --rm --name my-maven-project -v "$(pwd):/usr/src/mymaven" -w /usr/src/mymaven maven:3.9.9 mvn clean install'
+                    }
+                }
             }
         }
     }
